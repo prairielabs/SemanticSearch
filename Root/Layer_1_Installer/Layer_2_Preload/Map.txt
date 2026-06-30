@@ -1,0 +1,108 @@
+PRAIRIE PACKAGE MAP
+Schema: Prairie Nested Layered Harness Map v1.1.0
+Status: release routing
+
+PURPOSE
+Map declares where the app is and how it opens.
+Metadata names the package.
+Map routes the package.
+
+PACKAGE ROOT
+Root/
+
+STANDARD FILES
+HOOKS: Root/Hooks.txt
+README: Root/README.txt
+BROWSER_DROP_HANDLER: Root/Browser_Drop_Handler.txt
+INSTALLER: Root/Layer_1_Installer/Installer.txt
+METADATA: Root/Layer_1_Installer/Layer_2_Preload/Metadata.txt
+MAP: Root/Layer_1_Installer/Layer_2_Preload/Map.txt
+PAYLOAD_ROOT: Root/Layer_1_Installer/Layer_2_Preload/Layer_3_Payload/
+
+PAYLOAD DECLARATION
+ENTRY_FILE: Root/Layer_1_Installer/Layer_2_Preload/Layer_3_Payload/index.html
+ENTRY_POINT: local_html_search_surface
+ENTRY_ACTION: run_launcher_open_index_html
+
+PAYLOAD FILES
+- Root/Layer_1_Installer/Layer_2_Preload/Layer_3_Payload/SemanticSearch.txt
+- Root/Layer_1_Installer/Layer_2_Preload/Layer_3_Payload/base.html
+- Root/Layer_1_Installer/Layer_2_Preload/Layer_3_Payload/index.html
+- Root/Layer_1_Installer/Layer_2_Preload/Layer_3_Payload/semantic_harness.py
+- Root/Layer_1_Installer/Layer_2_Preload/Layer_3_Payload/Launch-SemanticSearch.ps1
+- Root/Layer_1_Installer/Install-SemanticSearch.ps1
+- Install Semantic Search.cmd
+
+OPTIONAL PAYLOAD SUBLAYERS
+None.
+
+LOCAL HARNESS ROUTING
+1. User says Inspect latest download.
+2. Hooks identify latest Prairie Labs ZIP.
+3. Installer waits for install.
+4. User says install.
+5. Installer creates or reuses Desktop/Prairie/SemanticSearch.
+6. Installer copies package contents.
+7. Installer creates config, history, and logs folders.
+8. Installer creates Desktop/Semantic Search.lnk.
+9. Launcher starts semantic_harness.py.
+10. Browser opens local index.html.
+
+BROWSER DROP ROUTING
+1. User uploads, drops, or pastes package or app text.
+2. Browser_Drop_Handler prevents fake filesystem operations.
+3. Metadata and Map are read as routing instructions only.
+4. base.html or SemanticSearch.txt is loaded if visible.
+5. The title/search surface is rendered directly.
+6. Local harness, shortcut, and history writing require filesystem access.
+
+ENTRY POINT RULES
+ENTRY_POINT identifies the first visible screen of the app.
+For Semantic Search, ENTRY_POINT is the local index.html search surface.
+After launch, the visible app surface contains:
+- Semantic Search title
+- search input
+- language button cycling English, French, Chinese
+- Powered by Mistral
+- source-first results after a query
+
+SEARCH ROUTING
+HTML form input becomes a Mistral-orchestrated source-first search query.
+The system must use real-time web search tools when available.
+The results screen must show source cards:
+- title/source name
+- direct URL
+- ASCII rating bar and score
+- short source summary
+
+ANSWER LAYER RULE
+Do not replace source results with a full AI answer unless the user explicitly asks.
+
+HTML OPERATOR RULE
+base.html is immutable. index.html is the model-owned working file. The local
+harness does not parse result objects into a template. It sends the query and
+HTML context to Mistral, accepts a complete HTML document back, writes that
+document to index.html, and redirects the browser to refresh.
+
+LOCAL OPERATOR COMMANDS
+The local harness accepts these search-field commands before routing to Mistral:
+- !status
+- !reset
+- !shortcut
+- !open-key
+- !open-folder
+- H
+
+HISTORY ROUTING
+Every completed search is written to a .txt history file when filesystem access
+or an equivalent history-writing tool is available.
+The History page is a browser for logs, not a logging toggle.
+
+FAILURE RULES
+If base.html, index.html, semantic_harness.py, or Launch-SemanticSearch.ps1 is
+missing in local harness mode, installation fails with the missing file name.
+If base.html and SemanticSearch.txt are not visible in browser-drop mode, say
+the payload file is missing and ask for the app file or full package content.
+If Metadata and Map disagree, Map controls routing and Metadata controls identity.
+
+END MAP

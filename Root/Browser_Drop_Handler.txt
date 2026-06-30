@@ -1,0 +1,62 @@
+PRAIRIE LABS BROWSER DROP HANDLER
+Version: 1.1.0
+Status: required browser-only fallback behavior
+
+PURPOSE
+This file handles the case where a Prairie Labs package or app .txt is dropped, uploaded, or pasted into a browser-only model environment instead of a local harness environment.
+
+DETECTION
+Use browser-drop mode when any of the following are true:
+- The model cannot inspect the user's real Downloads folder.
+- The model cannot create Desktop/Prairie.
+- The model cannot move, extract, or write files on the user's machine.
+- The package content is visible only as uploaded text, extracted text, or a pasted file.
+- The user is in a web chat and asks to run the app directly.
+
+CORE RULE
+Do not pretend the browser is a local filesystem.
+Do not attempt to manipulate the user's environment.
+Do not claim to create folders, install files, scan Downloads, or write saves.
+Shed the shell for the most part and run the program directly.
+
+BROWSER-DROP FLOW
+1. Identify whether the dropped material contains a full Prairie package or only a single program .txt.
+2. If full package structure is present:
+   a. Read Root/Hooks.txt if visible.
+   b. Read Root/README.txt if visible.
+   c. Read this Browser_Drop_Handler.txt if visible.
+   d. Read Root/Layer_1_Installer/Layer_2_Preload/Metadata.txt.
+   e. Read Root/Layer_1_Installer/Layer_2_Preload/Map.txt.
+   f. Ignore local installer operations.
+   g. Load the declared ENTRY_FILE from Layer_3_Payload.
+   h. Render the declared ENTRY_POINT immediately.
+3. If only a single program .txt is present:
+   a. Treat the visible file as the payload.
+   b. Locate its first screen, title screen, entry label, or boot rule.
+   c. Render that first screen immediately.
+4. Do not require the user to type install in browser-drop mode.
+
+SAVE BEHAVIOR IN BROWSER-DROP MODE
+If the app supports saves and the user chooses Save:
+- Do not claim a file was written.
+- Emit a copyable SAVE BLOCK containing the state.
+- Tell the user to paste or upload that SAVE BLOCK later to load it.
+
+If the app supports Load Game and the user chooses Load Game:
+- Do not scan a save folder.
+- Ask for a pasted/uploaded SAVE BLOCK or visible save text.
+- If a valid save block is provided, resume from it.
+- If no save block is available, offer New Game.
+
+SHELL SHEDDING RULE
+In browser-drop mode, shell files are only routing instructions.
+Once the payload entry point is found, stop narrating shell behavior and show the program UI.
+The user should feel like the app opened, not like the installer is being explained.
+
+TRUTH RULE
+If a required payload file is not visible in the uploaded/pasted content, say exactly what is missing.
+Do not invent missing payload files.
+Do not invent save files.
+Do not invent successful installation.
+
+END BROWSER DROP HANDLER

@@ -1,0 +1,156 @@
+PRAIRIE LABS GENERIC NESTED INSTALLER
+Version: 1.1.0
+Status: app-agnostic, reusable shell installer
+
+ROLE
+This installer moves a Prairie Labs nested layered harness package from latest downloaded ZIP into the standard Desktop/Prairie substrate, then loads the declared program entry point.
+
+SEMANTIC SEARCH LOCAL IMPLEMENTATION
+This package also includes an executable Windows installer:
+Root/Layer_1_Installer/Install-SemanticSearch.ps1
+
+The convenience command file at the package root is:
+Install Semantic Search.cmd
+
+For Semantic Search v0.4-local-html-operator, successful installation also:
+- creates Desktop/Prairie/SemanticSearch
+- creates config, history, and logs folders
+- creates Desktop/Semantic Search.lnk
+- initializes index.html from base.html
+- launches the local harness and opens index.html unless -NoLaunch is used
+- includes Open-LiveLogs.ps1 and the !logs command for a visible live harness log
+
+THIS INSTALLER IS GENERIC
+It must not assume the application name.
+It must not assume an entry point name.
+It must not assume a bundled agent.
+It learns package identity from Metadata.txt and routing from Map.txt.
+
+LOCAL HARNESS ONLY
+This installer is for a local harness environment that can inspect Downloads, create folders, extract files, and read from Desktop/Prairie.
+If the package is dropped into a browser-only chat environment, do not run this installer.
+Use Root/Browser_Drop_Handler.txt instead.
+
+USER FLOW LOCK, LOCAL HARNESS
+Download package.
+User says: Inspect latest download
+System inspects and prompts: Type "install" to install.
+User says: install
+System installs.
+System renders the declared entry point immediately.
+
+INSTALL COMMAND
+The only install command is:
+install
+
+INSTALL ROOT
+Desktop/Prairie
+
+NESTED PACKAGE ROOTS
+ROOT: Root/
+INSTALLER_LAYER: Root/Layer_1_Installer/
+INSTALLER_FILE: Root/Layer_1_Installer/Installer.txt
+PRELOAD_LAYER: Root/Layer_1_Installer/Layer_2_Preload/
+METADATA_FILE: Root/Layer_1_Installer/Layer_2_Preload/Metadata.txt
+MAP_FILE: Root/Layer_1_Installer/Layer_2_Preload/Map.txt
+PAYLOAD_ROOT: Root/Layer_1_Installer/Layer_2_Preload/Layer_3_Payload/
+
+SUBSTRATE RULE
+If Desktop/Prairie does not exist, create Desktop/Prairie.
+If Desktop/Prairie exists, proceed normally.
+Do not ask the user where to install.
+Do not create a different root folder for each app outside Desktop/Prairie.
+
+APPLICATION FOLDER RULE
+Each app installs into:
+Desktop/Prairie/[APP_FOLDER_NAME]
+
+APP_FOLDER_NAME is declared by Root/Layer_1_Installer/Layer_2_Preload/Metadata.txt.
+If APP_FOLDER_NAME is missing, derive a safe folder name from APP_NAME.
+If APP_NAME is missing, derive a safe folder name from the ZIP filename.
+
+INSTALLED PATH LOCK
+After extraction or copy completes, all subsequent reads use:
+Desktop/Prairie/[APP_FOLDER_NAME]/Root/
+
+Do not continue reading the ZIP in Downloads after install.
+Do not route from a temporary extracted package once the installed copy exists.
+Do not treat the Downloads copy as the active application after installation succeeds.
+
+REINSTALL / UPDATE SAFETY
+If Desktop/Prairie/[APP_FOLDER_NAME]/ already exists:
+- preserve saves/
+- preserve projects/
+- preserve exports/
+- preserve user-created .txt files
+- preserve user-created folders unless the app payload explicitly owns them
+- replace only shell/app files declared by the package
+- do not erase user state as part of reinstall or update
+
+INSTALL PROTOCOL
+On user command install:
+1. Confirm the current package is the latest inspected Prairie Labs nested layered harness package.
+2. Confirm this is a local harness environment, not browser-drop mode.
+3. Create or reuse Desktop/Prairie.
+4. Read Root/Layer_1_Installer/Layer_2_Preload/Metadata.txt for APP_NAME, APP_FOLDER_NAME, VERSION, PRICE, LICENSE, and primary payload information.
+5. Read Root/Layer_1_Installer/Layer_2_Preload/Map.txt for ENTRY_FILE and ENTRY_POINT.
+6. Create or reuse Desktop/Prairie/[APP_FOLDER_NAME].
+7. Extract or copy the full Root/ tree into Desktop/Prairie/[APP_FOLDER_NAME]/.
+8. Verify the payload root exists.
+9. Verify ENTRY_FILE exists in the payload root.
+10. Load ENTRY_FILE.
+11. Render ENTRY_POINT immediately.
+
+PRELOAD READ ORDER
+After install action begins:
+1. Metadata.txt
+2. Map.txt
+3. Declared ENTRY_FILE
+4. Declared ENTRY_POINT
+
+DO NOT
+Do not ask the user to choose an install location.
+Do not install outside Desktop/Prairie.
+Do not continue scanning Downloads after the latest package is selected.
+Do not invent Metadata values.
+Do not invent Map routes.
+Do not invent payload files.
+Do not show an installer menu unless the app payload declares one.
+Do not stop at a success message if the app entry point can be rendered.
+
+SAVE BEHAVIOR, LOCAL HARNESS
+If the app supports saves:
+- Create or reuse Desktop/Prairie/[APP_FOLDER_NAME]/saves/.
+- Save files use .txt.
+- Autosave may use autosave.txt if declared by app payload.
+- Manual saves may use save_001.txt, save_002.txt, etc.
+
+If the app does not support saves:
+- Do not create save files unless the app later declares save behavior.
+
+LOAD BEHAVIOR, LOCAL HARNESS
+If the app has Load Game or Load Project:
+- Scan only the declared app save folder.
+- Do not scan the whole Desktop.
+- Do not scan all of Downloads.
+- Present available save files by name.
+- If no saves exist, say no saves found and offer New Game/New Project when the app supports it.
+
+BROWSER-DROP DEFLECTION
+If the environment is browser-only:
+- Stop local install protocol.
+- Read Root/Browser_Drop_Handler.txt.
+- Use Metadata and Map only as routing instructions.
+- Load the declared visible payload directly.
+- Use SAVE BLOCKS rather than filesystem saves.
+
+SUCCESS CONDITION
+A successful install is not merely folder creation.
+A successful install ends only when the declared first screen of the application is visible.
+
+SHELL SILENCE AFTER ENTRY
+Once ENTRY_POINT is rendered, stop narrating shell, install, preload, or routing behavior.
+The user should see the application, not the packaging system.
+Only discuss shell behavior if the user explicitly asks.
+
+END INSTALLER

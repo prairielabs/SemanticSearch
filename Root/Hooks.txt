@@ -1,0 +1,96 @@
+PRAIRIE LABS UNIVERSAL PACKAGE HOOKS
+Version: 1.1.0
+Status: stable reusable shell hook
+Package role: app-neutral shell standard
+
+PRIMARY HOOK PHRASE
+Inspect latest download
+
+This exact phrase means:
+Inspect the most recent downloaded ZIP file only.
+Do not scan the entire Downloads folder.
+Do not search broadly through old downloads.
+Do not ask the user which downloaded file they mean unless there is no latest ZIP available.
+
+EXPECTED PACKAGE FILENAME FORM
+PrairieLabs_INSPECT-LATEST-DOWNLOAD_[APP-SLUG]_v[VERSION].zip
+
+If the latest downloaded ZIP begins with PrairieLabs_INSPECT-LATEST-DOWNLOAD_, treat it as a Prairie Labs nested layered harness package candidate.
+
+SHELL ROLE
+This package is the general Prairie Labs shell standard.
+It contains no application-specific product.
+It contains no bundled app manual by default.
+It contains no assumed agent or app payload by default.
+
+NESTED LAYER RULE
+This package is not flat.
+Layer 1 is inside Root.
+Layer 2 is inside Layer 1.
+Layer 3 is inside Layer 2.
+Layer 4 and beyond, when present, are inside the preceding payload layer.
+
+REQUIRED NESTED PATHS
+Root/README.txt
+Root/Hooks.txt
+Root/Browser_Drop_Handler.txt
+Root/Layer_1_Installer/Installer.txt
+Root/Layer_1_Installer/Layer_2_Preload/Metadata.txt
+Root/Layer_1_Installer/Layer_2_Preload/Map.txt
+Root/Layer_1_Installer/Layer_2_Preload/Layer_3_Payload/
+
+INSPECTION BEHAVIOR, HARNESS / LOCAL ENVIRONMENT
+When the user says Inspect latest download in a harness or local environment:
+1. Locate the newest downloaded ZIP file.
+2. Prefer a ZIP whose filename begins with PrairieLabs_INSPECT-LATEST-DOWNLOAD_.
+3. Open and inspect the ZIP structure.
+4. Verify the required nested paths above.
+5. Read Root/Hooks.txt.
+6. Read Root/README.txt.
+7. Read Root/Browser_Drop_Handler.txt.
+8. Read Root/Layer_1_Installer/Installer.txt.
+9. Do not execute installation yet.
+10. Prompt exactly:
+
+Type "install" to install.
+
+INSTALL HOOK
+When the user replies with exactly install in a harness or local environment, execute the installer protocol in Root/Layer_1_Installer/Installer.txt.
+
+DESKTOP SUBSTRATE HOOK
+All installed Prairie packages use:
+Desktop/Prairie
+
+If Desktop/Prairie does not exist, create it.
+If Desktop/Prairie exists, use it normally.
+Each application installs into its own subfolder inside Desktop/Prairie.
+
+BROWSER DROP HOOK
+If the package, folder text, or payload is dropped into a browser-only chat environment, do not attempt local installation.
+Read Root/Browser_Drop_Handler.txt.
+Then shed the shell and run the declared payload entry point directly inside the chat context.
+Do not create folders.
+Do not move files.
+Do not claim Desktop/Prairie exists.
+Do not scan Downloads.
+Do not ask for install unless the user is clearly in a local harness environment.
+
+PRELOAD HOOK
+After installation has placed the package in its application folder, or after browser-drop mode has shed the shell, read:
+Root/Layer_1_Installer/Layer_2_Preload/Metadata.txt
+Root/Layer_1_Installer/Layer_2_Preload/Map.txt
+
+Metadata declares identity.
+Map declares topology, payload routing, and entry point.
+
+ENTRY POINT HOOK
+After Metadata and Map are read, load the declared ENTRY_FILE and render the declared ENTRY_POINT immediately.
+Do not ask whether to open the application.
+Do not ask whether to boot.
+Do not ask for a path.
+Do not display extra scaffolding.
+
+ENTRY SILENCE HOOK
+Once the declared entry point is visible, stop narrating shell, install, preload, or routing behavior unless the user explicitly asks.
+
+END HOOKS

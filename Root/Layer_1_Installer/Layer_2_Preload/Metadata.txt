@@ -1,0 +1,63 @@
+PRAIRIE PACKAGE METADATA
+Schema: Prairie Nested Layered Harness Metadata v1.1.0
+Status: release metadata
+
+PURPOSE
+Metadata declares what this package is.
+It is read after installation begins and before the payload is loaded.
+It orients the harness without depending on a conventional runtime.
+
+PACKAGE VALUES
+APP_NAME: Semantic Search
+APP_FOLDER_NAME: SemanticSearch
+APP_SLUG: SEMANTIC-SEARCH
+VERSION: 0.4-local-html-operator
+PUBLISHER: Prairie Labs, Inc.
+PACKAGE_STANDARD: Prairie General Use Shell v1.1.0
+PACKAGE_TYPE: tool
+PRICE: Free
+INSTALL_ROOT: Desktop/Prairie
+INSTALL_TARGET: Desktop/Prairie/SemanticSearch
+ENTRY_POLICY: install_then_render_declared_entry_point_or_browser_drop_direct_run
+PAYLOAD_REQUIRED: yes
+NETWORK_REQUIRED: yes
+USER_INSTALL_COMMAND: install
+USER_INSPECTION_COMMAND: Inspect latest download
+BROWSER_DROP_SUPPORTED: yes
+BROWSER_DROP_POLICY: shed_shell_and_run_declared_payload_directly
+LICENSE: Prairie Labs application package. All rights reserved unless separately licensed.
+PRIMARY_PAYLOAD: Root/Layer_1_Installer/Layer_2_Preload/Layer_3_Payload/index.html
+PRIMARY_AGENT: Mistral Medium 3.5 HTML Operator
+PRIMARY_MODEL: mistral-medium-3-5
+PRIMARY_RUNTIME: local Python HTTP harness
+PRIMARY_BRANDING: Powered by Mistral
+NESTED_LAYERING: true
+LAYER_1_PATH: Root/Layer_1_Installer/
+LAYER_2_PATH: Root/Layer_1_Installer/Layer_2_Preload/
+LAYER_3_PATH: Root/Layer_1_Installer/Layer_2_Preload/Layer_3_Payload/
+
+FIRST SCREEN LOCKS
+FIRST_SCREEN: index.html
+FIRST_SCREEN_BEHAVIOR: launch local harness, open index.html, keep base.html immutable
+INPUT_COMPATIBILITY: HTML_form_search_queries_or_H_for_history
+SAVE_FOLDER_LOCAL_HARNESS: none
+SAVE_BEHAVIOR_BROWSER_DROP: none
+LOAD_GAME_BEHAVIOR_LOCAL_HARNESS: none
+LOAD_GAME_BEHAVIOR_BROWSER_DROP: none
+HISTORY_FOLDER_LOCAL_HARNESS: Desktop/Prairie/SemanticSearch/history/
+HISTORY_BEHAVIOR_BROWSER_DROP: explain that history files require filesystem access when history writing is unavailable
+DESKTOP_SHORTCUT: Desktop/Semantic Search.lnk
+LOCAL_CONFIG_KEY_FILE: Desktop/Prairie/SemanticSearch/Root/Layer_1_Installer/Layer_2_Preload/Layer_3_Payload/config/mistral_api_key.txt
+BASE_HTML_IMMUTABLE: Root/Layer_1_Installer/Layer_2_Preload/Layer_3_Payload/base.html
+MODEL_WORKING_HTML: Root/Layer_1_Installer/Layer_2_Preload/Layer_3_Payload/index.html
+LOCAL_OPERATOR_COMMANDS: !status, !reset, !shortcut, !open-key, !open-folder, H
+
+APPLICATION SUMMARY
+Semantic Search is a local HTML search surface. The installer creates a
+desktop shortcut that starts a local harness and opens index.html. The user
+submits a query through index.html. Mistral Medium 3.5 receives the query,
+searches when agent web search is available, and directly authors the next
+complete index.html. The harness writes the file and refreshes the browser.
+base.html is never modified and is the model's clean starting point.
+
+END METADATA

@@ -1,0 +1,38 @@
+PRAIRIE LABS SEMANTIC SEARCH PACKAGE TREE
+Shell Standard: Prairie General Use Shell v1.1.0
+App Version: 0.4-local-html-operator
+
+Root/
+  README.txt
+  Hooks.txt
+  Browser_Drop_Handler.txt
+  SHELL_TREE.txt
+  Layer_1_Installer/
+    Installer.txt
+    Install-SemanticSearch.ps1
+    Layer_2_Preload/
+      Metadata.txt
+      Map.txt
+      Layer_3_Payload/
+        SemanticSearch.txt
+        base.html
+        index.html
+        semantic_harness.py
+        Launch-SemanticSearch.ps1
+        config/
+          README.txt
+
+Rule: Payload begins at Layer_3_Payload.
+Rule: Browser-drop mode sheds local install behavior and runs the declared payload directly.
+Rule: No separate language/framework folder is bundled in this package.
+Rule: App behavior belongs in the payload.
+Rule: After local install, route from installed copy only.
+Rule: Reinstall/update preserves saves, projects, exports, history, and user-created .txt files.
+Rule: After app entry point appears, shell becomes silent unless asked.
+Rule: Semantic Search installs a desktop shortcut that opens local index.html.
+Rule: base.html is immutable.
+Rule: index.html is model-owned and rewritten by Mistral.
+Rule: The page includes Powered by Mistral and a language button cycling English, French, Chinese.
+Rule: Local operator commands are available through the search field: !status, !reset, !shortcut, !open-key, !open-folder, and H.
+
+END SHELL TREE

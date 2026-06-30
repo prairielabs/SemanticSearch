@@ -1,0 +1,14 @@
+*.zip
+
+# Local packaging workspaces / duplicate extracted bundles.
+semantic-search-package-stage/
+semantic-search-package-work/
+PrairieLabs_INSPECT-LATEST-DOWNLOAD_SEMANTIC-SEARCH_v0.4-local-html-operator/
+
+# Runtime-local configuration and logs.
+mistral_api_key.txt
+Root/Layer_1_Installer/Layer_2_Preload/Layer_3_Payload/config/mistral_api_key.txt
+*.log
+history/
+__pycache__/
+*.pyc

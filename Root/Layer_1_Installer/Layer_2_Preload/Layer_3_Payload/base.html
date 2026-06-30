@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prairie Search</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #202124;
+      --muted: #5f6368;
+      --line: #dadce0;
+      --paper: #fbfcf8;
+      --white: #ffffff;
+      --green: #176b4d;
+      --sky: #2f7fbf;
+      --wheat: #d99a28;
+      --clay: #cf4e2f;
+      --shadow: 0 2px 7px rgba(32, 33, 36, 0.12);
+      --shadow-strong: 0 6px 22px rgba(23, 107, 77, 0.14);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background:
+        linear-gradient(180deg, rgba(125, 185, 219, 0.18) 0, rgba(255, 255, 255, 0) 245px),
+        linear-gradient(180deg, var(--paper) 0%, #f4f7ee 100%);
+      color: var(--ink);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 92px;
+      pointer-events: none;
+      background:
+        linear-gradient(170deg, rgba(23, 107, 77, 0) 0 36%, rgba(23, 107, 77, 0.12) 37% 58%, rgba(23, 107, 77, 0) 59%),
+        linear-gradient(11deg, rgba(217, 154, 40, 0.18) 0 42%, rgba(217, 154, 40, 0) 43%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(244, 247, 238, 0.96) 82%);
+      z-index: -1;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      padding: 16px 22px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .top-link {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font: inherit;
+      padding: 8px 3px;
+      text-decoration: none;
+    }
+
+    .top-link:hover {
+      color: var(--ink);
+      text-decoration: underline;
+    }
+
+    .language-button {
+      min-width: 86px;
+      min-height: 36px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 0 14px;
+      cursor: pointer;
+      font: inherit;
+      box-shadow: 0 1px 2px rgba(32, 33, 36, 0.05);
+    }
+
+    .language-button:hover {
+      border-color: #c6c9ce;
+      box-shadow: var(--shadow);
+    }
+
+    main {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px 18px 42px;
+    }
+
+    .search-shell {
+      width: min(680px, 100%);
+      text-align: center;
+      transform: translateY(-5vh);
+    }
+
+    .wordmark {
+      display: inline-flex;
+      align-items: baseline;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.02em;
+      margin: 0 0 24px;
+      font-size: clamp(48px, 10vw, 88px);
+      line-height: 0.95;
+      font-weight: 500;
+      letter-spacing: 0;
+      color: var(--ink);
+    }
+
+    .wordmark span {
+      display: inline-block;
+    }
+
+    .wordmark .p { color: var(--green); }
+    .wordmark .r { color: var(--sky); }
+    .wordmark .a { color: var(--wheat); }
+    .wordmark .i { color: var(--clay); }
+    .wordmark .rie { color: var(--green); }
+    .wordmark .search { color: var(--ink); font-weight: 400; margin-left: 0.12em; }
+    .wordmark .dot { color: var(--wheat); }
+
+    .tagline {
+      margin: -10px 0 24px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .panel {
+      width: min(640px, 100%);
+      margin: 0 auto 22px;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.78);
+      box-shadow: 0 1px 4px rgba(32, 33, 36, 0.06);
+      text-align: left;
+      overflow-wrap: anywhere;
+    }
+
+    form {
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      min-height: 56px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--white);
+      box-shadow: 0 1px 6px rgba(32, 33, 36, 0.09);
+      transition: border-color 140ms ease, box-shadow 140ms ease;
+    }
+
+    .search-box:focus-within,
+    .search-box:hover {
+      border-color: rgba(23, 107, 77, 0.28);
+      box-shadow: var(--shadow-strong);
+    }
+
+    .search-glyph {
+      width: 22px;
+      height: 22px;
+      margin-left: 18px;
+      margin-right: 8px;
+      border: 2px solid #7a8088;
+      border-radius: 50%;
+      position: relative;
+      flex: 0 0 auto;
+    }
+
+    .search-glyph::after {
+      content: "";
+      position: absolute;
+      width: 9px;
+      height: 2px;
+      right: -7px;
+      bottom: -4px;
+      background: #7a8088;
+      border-radius: 999px;
+      transform: rotate(45deg);
+      transform-origin: center;
+    }
+
+    input[type="search"] {
+      width: 100%;
+      min-width: 0;
+      min-height: 54px;
+      border: 0;
+      padding: 0 18px 0 8px;
+      background: transparent;
+      color: var(--ink);
+      font-size: 18px;
+      outline: none;
+      appearance: none;
+    }
+
+    input[type="search"]::-webkit-search-decoration,
+    input[type="search"]::-webkit-search-cancel-button {
+      appearance: none;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .search-button,
+    .utility-button {
+      min-height: 42px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 0 18px;
+      background: #f8f9fa;
+      color: var(--ink);
+      font-size: 14px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .search-button {
+      background: var(--green);
+      color: #ffffff;
+    }
+
+    .search-button:hover,
+    .utility-button:hover {
+      border-color: #c8ccd2;
+      box-shadow: 0 1px 1px rgba(32, 33, 36, 0.08);
+    }
+
+    .search-button:hover {
+      border-color: rgba(23, 107, 77, 0.24);
+      background: #125a40;
+    }
+
+    .hint {
+      margin: 22px auto 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .hint strong {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .footer {
+      min-height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 11px;
+      padding: 0 18px 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .footer span {
+      white-space: nowrap;
+    }
+
+    .mistral {
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        padding: 12px 14px;
+        gap: 8px;
+      }
+
+      .top-link {
+        display: none;
+      }
+
+      main {
+        align-items: start;
+        min-height: 0;
+        padding-top: 64px;
+      }
+
+      .search-shell {
+        transform: none;
+      }
+
+      .wordmark {
+        font-size: clamp(42px, 15vw, 64px);
+        margin-bottom: 22px;
+      }
+
+      .tagline {
+        margin-bottom: 18px;
+      }
+
+      .search-box {
+        min-height: 54px;
+      }
+
+      input[type="search"] {
+        font-size: 16px;
+      }
+
+      .button-row {
+        margin-top: 18px;
+      }
+
+      .search-button,
+      .utility-button {
+        flex: 1 1 160px;
+      }
+    }
+  </style>
+</head>
+<body data-semantic-search-page="base">
+  <header class="topbar">
+    <button class="top-link" type="button" data-command="H">History</button>
+    <button class="top-link" type="button" data-command="!status">Status</button>
+    <button class="language-button" id="language-button" type="button" aria-label="Change language">English</button>
+  </header>
+
+  <main>
+    <section class="search-shell" aria-label="Prairie Search">
+      <h1 class="wordmark" aria-label="Prairie Search">
+        <span class="p">P</span><span class="r">r</span><span class="a">a</span><span class="i">i</span><span class="rie">rie</span><span class="search">Search</span><span class="dot">.</span>
+      </h1>
+      <p class="tagline" id="tagline-text">Local source-first search, orchestrated by Mistral.</p>
+      <form method="post" action="/search" id="search-form">
+        <input type="hidden" name="language" id="language-input" value="en">
+        <div class="search-box">
+          <span class="search-glyph" aria-hidden="true"></span>
+          <input type="search" name="q" id="query-input" autocomplete="off" autofocus placeholder="Search the web" aria-label="Search query">
+        </div>
+        <div class="button-row">
+          <button class="search-button" id="search-button" type="submit">Prairie Search</button>
+          <button class="utility-button" type="button" data-command="!open-key">Mistral Key</button>
+        </div>
+      </form>
+      <p class="hint" id="hint-text"><strong>No ads.</strong> No cookies. No forced AI summary.</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Prairie Labs</span>
+    <span aria-hidden="true">/</span>
+    <span class="mistral">Powered by Mistral</span>
+  </footer>
+
+  <script>
+    (function () {
+      var languages = [
+        {
+          code: "en",
+          label: "English",
+          placeholder: "Search the web",
+          button: "Prairie Search",
+          tagline: "Local source-first search, orchestrated by Mistral.",
+          hint: "No ads. No cookies. No forced AI summary."
+        },
+        {
+          code: "fr",
+          label: "French",
+          placeholder: "Rechercher sur le web",
+          button: "Recherche Prairie",
+          tagline: "Recherche locale axée sur les sources, orchestrée par Mistral.",
+          hint: "Pas de pubs. Pas de cookies. Pas de résumé IA imposé."
+        },
+        {
+          code: "zh",
+          label: "Chinese",
+          placeholder: "搜索网页",
+          button: "草原搜索",
+          tagline: "由 Mistral 编排的本地来源优先搜索。",
+          hint: "无广告。无 Cookie。无强制 AI 摘要。"
+        }
+      ];
+      var stored = "en";
+      try {
+        stored = localStorage.getItem("semantic-search-language") || "en";
+      } catch (err) {}
+      var current = languages.findIndex(function (item) { return item.code === stored; });
+      if (current < 0) current = 0;
+
+      var button = document.getElementById("language-button");
+      var input = document.getElementById("language-input");
+      var query = document.getElementById("query-input");
+      var search = document.getElementById("search-button");
+      var hint = document.getElementById("hint-text");
+      var tagline = document.getElementById("tagline-text");
+      var form = document.getElementById("search-form");
+
+      function applyLanguage() {
+        var lang = languages[current];
+        document.documentElement.lang = lang.code;
+        input.value = lang.code;
+        button.textContent = lang.label;
+        if (query) query.placeholder = lang.placeholder;
+        if (search) search.textContent = lang.button;
+        if (hint) hint.textContent = lang.hint;
+        if (tagline) tagline.textContent = lang.tagline;
+        try {
+          localStorage.setItem("semantic-search-language", lang.code);
+        } catch (err) {}
+      }
+
+      function submitCommand(command) {
+        if (!query || !form) return;
+        query.value = command;
+        form.requestSubmit ? form.requestSubmit() : form.submit();
+      }
+
+      button.addEventListener("click", function () {
+        current = (current + 1) % languages.length;
+        applyLanguage();
+      });
+
+      Array.prototype.forEach.call(document.querySelectorAll("[data-command]"), function (control) {
+        control.addEventListener("click", function () {
+          submitCommand(control.getAttribute("data-command"));
+        });
+      });
+
+      applyLanguage();
+    }());
+  </script>
+</body>
+</html>
